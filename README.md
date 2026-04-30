@@ -16,7 +16,7 @@ Nesta primeira etapa, foram utilizados datasets públicos contendo imagens de re
 ## 📂 Estrutura do Projeto
 
 ```
-PROJETO-RECICLAGEM/
+projeto-recifavela/
 │
 ├── .venv/                  # Ambiente virtual (ignorado no Git)
 │
