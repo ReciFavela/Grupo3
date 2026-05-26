@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # MongoDB - Armazena eventos brutos de detecção
+  mongodb:
+    image: mongo:6.0
+    container_name: projeto-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - backend
+    healthcheck:
+      test: echo 'db.adminCommand("ping")' | mongosh -u root -p rootpassword
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # InfluxDB - Armazena métricas agregadas (time-series)
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: projeto-influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      INFLUXDB_DB: metrics
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: adminpassword
+      INFLUXDB_HTTP_AUTH_ENABLED: "false"
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+      DOCKER_INFLUXDB_INIT_ORG: projeto-recifavela
+      DOCKER_INFLUXDB_INIT_BUCKET: metrics
+      DOCKER_INFLUXDB_INIT_RETENTION: 30d
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: supercalifragilisticexpialidocious
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks:
+      - backend
+    healthcheck:
+      test: wget --quiet --tries=1 --spider http://localhost:8086/ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO - Armazenamento de objetos (imagens)
+  minio:
+    image: minio/minio:latest
+    container_name: projeto-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/minio_data
+    command: server /minio_data --console-address ":9001"
+    networks:
+      - backend
+    healthcheck:
+      test: curl -f http://localhost:9000/minio/health/live || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+  influxdb_data:
+  minio_data:

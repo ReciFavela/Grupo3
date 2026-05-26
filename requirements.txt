@@ -12,3 +12,9 @@ pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 six==1.17.0
 tqdm==4.67.3
+
+# Database clients
+pymongo==4.6.0
+influxdb-client==1.44.0
+minio==7.2.0
+python-dotenv==1.0.0
