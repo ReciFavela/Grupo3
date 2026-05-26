@@ -153,5 +153,10 @@ Observações:
 
 ---
 
-## 👨‍💻 Autor
-Projeto acadêmico de Machine Learning aplicado à classificação de resíduos.
+## 👨‍💻 Autores
+
+Enzo Oliveira D'Onofrio
+Luigi Luand Botto
+Luigi Menezes Collesi
+Diogo Musso Coutinho
+Alan Martins Leandro
